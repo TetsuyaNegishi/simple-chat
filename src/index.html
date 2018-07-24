@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="jp">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -11,7 +11,45 @@
     <title>Simple chat</title>
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <nav class="navbar navbar-dark bg-primary">
+      <a class="navbar-brand" href="#">Simple Chat</a>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+          <h1 class="h2">rooms</h1>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="room name">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">＋</span>
+            </div>
+          </div>
+          <ul id="rooms" class="list-group">
+            <li class="list-group-item">room1</li>
+            <li class="list-group-item">room2</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h1 class="h2">title</h1>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="comment">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">＋</span>
+            </div>
+          </div>
+          <div id="comments">
+            <div class="media border-bottom border-gray pb-2">
+              <img class="mr-3" src="" alt="">
+              <div class="media-body">
+                <h5 class="mt-0">Tetsuya Negishi</h5>
+                テストチャット
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
