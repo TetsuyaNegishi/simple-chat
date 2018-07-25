@@ -4,7 +4,7 @@ function init() {
   });
 
   $('#add-message-btn').on('click',function(){
-    console.log('add-message');
+    postMessage();
   });
 }
 
@@ -18,5 +18,18 @@ function getRoomName() {
 }
 
 function postRoomData(roomName) {
+  console.log('post room')
+}
+
+function addMessage() {
+  getMessageText();
+  postMessage();
+}
+
+function getMessageText() {
+  console.log('room name');
+}
+
+function postMessage(messageText) {
   console.log('post room')
 }
