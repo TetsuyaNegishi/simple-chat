@@ -1,14 +1,34 @@
+var db = firebase.firestore();
+
+init();
+
 function init() {
   $('#add-room-btn').on('click',function(){
-    addRoom();
+    postRoom();
   });
 
   $('#add-message-btn').on('click',function(){
     postMessage();
   });
+
+  setRoomListener();
 }
 
-function addRoom() {
+function setRoomListener() {
+  db.collection("rooms").onSnapshot(function(snapshot) {
+    snapshot.docChanges.forEach(function(change) {
+      if (change.type === "added") {
+        addRoomDom(change.doc.data().name);
+      }
+    });
+  });
+}
+
+function addRoomDom(roomName) {
+  $('#rooms').prepend('<li class="list-group-item">' + roomName + '</li>');
+}
+
+function postRoom() {
   getRoomName();
   postRoomData();
 }
