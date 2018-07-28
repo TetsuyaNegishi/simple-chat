@@ -11,34 +11,41 @@ function init() {
     postMessage();
   });
 
+  $(document).on("click", ".room-item", function(event){
+    console.log(event.target.id);
+  });
+
   setRoomListener();
 }
 
 function setRoomListener() {
-  db.collection("rooms").onSnapshot(function(snapshot) {
+  db.collection("rooms").orderBy("timestamp").onSnapshot(function(snapshot) {
     snapshot.docChanges.forEach(function(change) {
       if (change.type === "added") {
-        addRoomDom(change.doc.data().name);
+        addRoomDom(change.doc.id, change.doc.data().name);
       }
     });
   });
 }
 
-function addRoomDom(roomName) {
-  $('#rooms').prepend('<li class="list-group-item">' + roomName + '</li>');
+function addRoomDom(id, roomName) {
+  $('#rooms').prepend('<li id="' + id +'" class="room-item list-group-item">' + roomName + '</li>');
 }
 
 function postRoom() {
-  getRoomName();
-  postRoomData();
+  var roomName = getRoomName();
+  postRoomData(roomName);
 }
 
 function getRoomName() {
-  console.log('room name');
+  return $('#input-room-name').val();
 }
 
 function postRoomData(roomName) {
-  console.log('post room')
+  db.collection("rooms").add({
+    name: roomName,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
 }
 
 function addMessage() {
