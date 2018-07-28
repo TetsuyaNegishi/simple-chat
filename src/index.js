@@ -1,4 +1,6 @@
 var db = firebase.firestore();
+var unsubscribeMessage;
+var selectedRoomId;
 
 init();
 
@@ -8,14 +10,20 @@ function init() {
   });
 
   $('#add-message-btn').on('click',function(){
-    postMessage();
+    postComment();
   });
 
   $(document).on("click", ".room-item", function(event){
-    console.log(event.target.id);
+    setRoomTitle($(event.target).text());
+    setCommentLitener(event.target.id);
+    selectedRoomId = event.target.id;
   });
 
   setRoomListener();
+}
+
+function setRoomTitle(roomName) {
+  $('#room-title').text(roomName);
 }
 
 function setRoomListener() {
@@ -48,15 +56,49 @@ function postRoomData(roomName) {
   });
 }
 
-function addMessage() {
-  getMessageText();
-  postMessage();
+function setCommentLitener(roomId) {
+  if(unsubscribeMessage) {
+    unsubscribeMessage();
+  }
+  clearComment();
+  unsubscribeMessage = db.collection("rooms").doc(roomId).collection("comments").orderBy("timestamp").onSnapshot(function(snapshot) {
+    snapshot.docChanges.forEach(function(change) {
+      if (change.type === "added") {
+        addCommentDom(change.doc.id, change.doc.data().comment);
+      }
+    });
+  });
 }
 
-function getMessageText() {
-  console.log('room name');
+function clearComment() {
+  $('#comments').empty();
 }
 
-function postMessage(messageText) {
-  console.log('post room')
+function addCommentDom(id, comment) {
+  var dom = '<div class="media border-bottom border-gray pb-2"><img class="mr-3" src="" alt=""><div class="media-body"><h5 class="mt-0">Tetsuya Negishi</h5>' + comment + '</div></div>';
+  $('#comments').prepend(dom)
+}
+
+function postComment() {
+  var comment = getCommentText();
+  postCommentData(comment);
+  clearInputComment();
+}
+
+function getCommentText() {
+  return $('#input-comment').val();
+}
+
+function postCommentData(commentText) {
+  if (!selectedRoomId) {
+    return;
+  }
+  db.collection("rooms").doc(selectedRoomId).collection('comments').add({
+    comment: commentText,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+function clearInputComment() {
+  $('#input-comment').val('');
 }
