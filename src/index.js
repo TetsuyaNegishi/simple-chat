@@ -22,24 +22,7 @@ function init() {
   setRoomListener();
 }
 
-function setRoomTitle(roomName) {
-  $('#room-title').text(roomName);
-}
-
-function setRoomListener() {
-  db.collection("rooms").orderBy("timestamp").onSnapshot(function(snapshot) {
-    snapshot.docChanges.forEach(function(change) {
-      if (change.type === "added") {
-        addRoomDom(change.doc.id, change.doc.data().name);
-      }
-    });
-  });
-}
-
-function addRoomDom(id, roomName) {
-  $('#rooms').prepend('<li id="' + id +'" class="room-item list-group-item">' + roomName + '</li>');
-}
-
+// postRoom
 function postRoom() {
   var roomName = getRoomName();
   postRoomData(roomName);
@@ -56,6 +39,37 @@ function postRoomData(roomName) {
   });
 }
 
+// postComment
+function postComment() {
+  var comment = getCommentText();
+  postCommentData(comment);
+  clearInputComment();
+}
+
+function getCommentText() {
+  return $('#input-comment').val();
+}
+
+function postCommentData(commentText) {
+  if (!selectedRoomId) {
+    return;
+  }
+  db.collection("rooms").doc(selectedRoomId).collection('comments').add({
+    comment: commentText,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+function clearInputComment() {
+  $('#input-comment').val('');
+}
+
+// setRoomTitle
+function setRoomTitle(roomName) {
+  $('#room-title').text(roomName);
+}
+
+// setCommentLitener
 function setCommentLitener(roomId) {
   if(unsubscribeMessage) {
     unsubscribeMessage();
@@ -79,26 +93,17 @@ function addCommentDom(id, comment) {
   $('#comments').prepend(dom)
 }
 
-function postComment() {
-  var comment = getCommentText();
-  postCommentData(comment);
-  clearInputComment();
-}
-
-function getCommentText() {
-  return $('#input-comment').val();
-}
-
-function postCommentData(commentText) {
-  if (!selectedRoomId) {
-    return;
-  }
-  db.collection("rooms").doc(selectedRoomId).collection('comments').add({
-    comment: commentText,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+// setRoomListener
+function setRoomListener() {
+  db.collection("rooms").orderBy("timestamp").onSnapshot(function(snapshot) {
+    snapshot.docChanges.forEach(function(change) {
+      if (change.type === "added") {
+        addRoomDom(change.doc.id, change.doc.data().name);
+      }
+    });
   });
 }
 
-function clearInputComment() {
-  $('#input-comment').val('');
+function addRoomDom(id, roomName) {
+  $('#rooms').prepend('<li id="' + id +'" class="room-item list-group-item">' + roomName + '</li>');
 }
