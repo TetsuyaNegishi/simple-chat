@@ -1,4 +1,5 @@
 var db = firebase.firestore();
+var auth = firebase.auth();
 var unsubscribeMessage;
 var selectedRoomId;
 
@@ -19,7 +20,17 @@ function init() {
     selectedRoomId = event.target.id;
   });
 
+  $(document).on("click", "#sign-in", function() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  })
+
+  $(document).on("click", "#sign-out", function() {
+    auth.signOut();
+  })
+
   setRoomListener();
+  setAuthChangeListener();
 }
 
 // postRoom
@@ -106,4 +117,16 @@ function setRoomListener() {
 
 function addRoomDom(id, roomName) {
   $('#rooms').prepend('<li id="' + id +'" class="room-item list-group-item">' + roomName + '</li>');
+}
+
+function setAuthChangeListener() {
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      $('#sign-in').attr('hidden', true);
+      $('#sign-out').attr('hidden', false);
+    } else {
+      $('#sign-in').attr('hidden', false);
+      $('#sign-out').attr('hidden', true);
+    }
+  });
 }
