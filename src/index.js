@@ -52,6 +52,9 @@ function postRoomData(roomName) {
 
 // postComment
 function postComment() {
+  if (!selectedRoomId || !auth.currentUser) {
+    return;
+  }
   var comment = getCommentText();
   postCommentData(comment);
   clearInputComment();
@@ -62,12 +65,14 @@ function getCommentText() {
 }
 
 function postCommentData(commentText) {
-  if (!selectedRoomId) {
-    return;
-  }
+  var currentUser = auth.currentUser;
   db.collection("rooms").doc(selectedRoomId).collection('comments').add({
     comment: commentText,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    user: {
+      name: currentUser.displayName,
+      photoUrl: currentUser.photoURL
+    }
   });
 }
 
