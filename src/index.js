@@ -94,7 +94,7 @@ function setCommentLitener(roomId) {
   unsubscribeMessage = db.collection("rooms").doc(roomId).collection("comments").orderBy("timestamp").onSnapshot(function(snapshot) {
     snapshot.docChanges.forEach(function(change) {
       if (change.type === "added") {
-        addCommentDom(change.doc.id, change.doc.data().comment);
+        addCommentDom(change.doc.id, change.doc.data().comment, change.doc.data().user);
       }
     });
   });
@@ -104,8 +104,8 @@ function clearComment() {
   $('#comments').empty();
 }
 
-function addCommentDom(id, comment) {
-  var dom = '<div class="media border-bottom border-gray pb-2"><img class="mr-3" src="" alt=""><div class="media-body"><h5 class="mt-0">Tetsuya Negishi</h5>' + comment + '</div></div>';
+function addCommentDom(id, comment, user) {
+  var dom = '<div class="media border-bottom border-gray pb-2"><img class="mr-3" src="'+ user.photoUrl + '" style="  width: 50px;border-radius: 25px;"><div class="media-body"><h5 class="mt-0">' + user.name + '</h5>' + comment + '</div></div>';
   $('#comments').prepend(dom)
 }
 
